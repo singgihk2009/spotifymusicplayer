@@ -6,6 +6,7 @@ import { Home } from './views/Home';
 import { Search } from './views/Search';
 import { Library } from './views/Library';
 import { PlaylistDetail } from './views/PlaylistDetail';
+import { AddSong } from './views/AddSong';
 import { Playlist } from './types';
 
 function App() {
@@ -34,6 +35,8 @@ function App() {
         return <Search />;
       case 'library':
         return <Library onPlaylistClick={handlePlaylistClick} />;
+      case 'add-song':
+        return <AddSong onBack={() => setCurrentView('home')} />;
       default:
         return <Home onPlaylistClick={handlePlaylistClick} />;
     }

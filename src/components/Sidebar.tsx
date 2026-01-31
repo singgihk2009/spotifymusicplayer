@@ -1,4 +1,4 @@
-import { Home, Search, Library, Plus, Heart } from 'lucide-react';
+import { Home, Search, Library, Plus, Heart, Music } from 'lucide-react';
 
 interface SidebarProps {
   currentView: string;
@@ -47,6 +47,18 @@ export const Sidebar = ({ currentView, onViewChange }: SidebarProps) => {
         </nav>
 
         <div className="mt-8 space-y-4">
+          <button
+            onClick={() => onViewChange('add-song')}
+            className={`flex items-center gap-3 w-full p-2 rounded-lg transition ${
+              currentView === 'add-song' ? 'bg-gray-800' : 'hover:bg-gray-800'
+            }`}
+          >
+            <div className="w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center rounded">
+              <Music size={16} />
+            </div>
+            <span className="font-medium">Add Song</span>
+          </button>
+
           <button
             onClick={() => onViewChange('create-playlist')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-gray-800 transition"
