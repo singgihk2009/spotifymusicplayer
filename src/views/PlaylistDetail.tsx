@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, Play } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
 import { Playlist, Song } from '../types';
 import { SongItem } from '../components/SongItem';
 import { useAudio } from '../context/AudioContext';
@@ -21,23 +21,11 @@ export const PlaylistDetail = ({ playlist, onBack }: PlaylistDetailProps) => {
 
   const fetchPlaylistSongs = async () => {
     try {
-      const { data } = await supabase
-        .from('playlist_songs')
-        .select(`
-          *,
-          song:songs(
-            *,
-            artist:artists(*),
-            album:albums(*)
-          )
-        `)
-        .eq('playlist_id', playlist.id)
-        .order('position');
+      const data = await api.playlists.getById(playlist.id);
 
-      if (data) {
-        const playlistSongs = data.map((item) => item.song as Song).filter(Boolean);
-        setSongs(playlistSongs);
-        setQueue(playlistSongs);
+      if (data.songs) {
+        setSongs(data.songs);
+        setQueue(data.songs);
       }
     } catch (error) {
       console.error('Error fetching playlist songs:', error);

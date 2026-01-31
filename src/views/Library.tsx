@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
 import { Playlist } from '../types';
 import { PlaylistCard } from '../components/PlaylistCard';
 
@@ -17,13 +17,8 @@ export const Library = ({ onPlaylistClick }: LibraryProps) => {
 
   const fetchPlaylists = async () => {
     try {
-      const { data } = await supabase
-        .from('playlists')
-        .select('*')
-        .eq('is_public', true)
-        .order('created_at', { ascending: false });
-
-      if (data) setPlaylists(data);
+      const data = await api.playlists.getAll();
+      setPlaylists(data);
     } catch (error) {
       console.error('Error fetching playlists:', error);
     } finally {

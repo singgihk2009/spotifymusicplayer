@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Search as SearchIcon } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
 import { Song } from '../types';
 import { SongItem } from '../components/SongItem';
 import { useAudio } from '../context/AudioContext';
@@ -21,20 +21,11 @@ export const Search = () => {
 
     setLoading(true);
     try {
-      const { data } = await supabase
-        .from('songs')
-        .select(`
-          *,
-          artist:artists(*),
-          album:albums(*)
-        `)
-        .ilike('title', `%${searchQuery}%`)
-        .limit(20);
+      const data = await api.songs.search(searchQuery);
+      const limitedResults = data.slice(0, 20);
 
-      if (data) {
-        setResults(data);
-        setQueue(data);
-      }
+      setResults(limitedResults);
+      setQueue(limitedResults);
     } catch (error) {
       console.error('Error searching:', error);
     } finally {

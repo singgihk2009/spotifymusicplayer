@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
 import { Song, Playlist } from '../types';
 import { PlaylistCard } from '../components/PlaylistCard';
 import { SongItem } from '../components/SongItem';
@@ -21,27 +21,16 @@ export const Home = ({ onPlaylistClick }: HomeProps) => {
 
   const fetchData = async () => {
     try {
-      const { data: playlistsData } = await supabase
-        .from('playlists')
-        .select('*')
-        .eq('is_public', true)
-        .limit(6);
+      const [playlistsData, songsData] = await Promise.all([
+        api.playlists.getAll(),
+        api.songs.getAll(),
+      ]);
 
-      const { data: songsData } = await supabase
-        .from('songs')
-        .select(`
-          *,
-          artist:artists(*),
-          album:albums(*)
-        `)
-        .order('play_count', { ascending: false })
-        .limit(10);
+      setPlaylists(playlistsData.slice(0, 6));
 
-      if (playlistsData) setPlaylists(playlistsData);
-      if (songsData) {
-        setPopularSongs(songsData);
-        setQueue(songsData);
-      }
+      const sortedSongs = songsData.sort((a, b) => b.play_count - a.play_count).slice(0, 10);
+      setPopularSongs(sortedSongs);
+      setQueue(sortedSongs);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {

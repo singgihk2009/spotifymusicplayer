@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useRef, useEffect, ReactNode } from 'react';
 import { Song } from '../types';
+import { api } from '../lib/api';
 
 interface AudioContextType {
   currentSong: Song | null;
@@ -72,10 +73,16 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
 
       if (audioRef.current && queueList[nextIndex]) {
         audioRef.current.src = queueList[nextIndex].audio_url;
-        audioRef.current.play().catch(err => {
-          console.error('Error playing next song:', err);
-          setIsPlaying(false);
-        });
+        audioRef.current.play()
+          .then(() => {
+            api.songs.play(queueList[nextIndex].id).catch(err => {
+              console.error('Error updating play count:', err);
+            });
+          })
+          .catch(err => {
+            console.error('Error playing next song:', err);
+            setIsPlaying(false);
+          });
         setCurrentSong(queueList[nextIndex]);
         setIsPlaying(true);
       }
@@ -114,6 +121,9 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
         .then(() => {
           setCurrentSong(song);
           setIsPlaying(true);
+          api.songs.play(song.id).catch(err => {
+            console.error('Error updating play count:', err);
+          });
         })
         .catch(err => {
           console.error('Error playing song:', err);
