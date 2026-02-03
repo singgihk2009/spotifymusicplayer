@@ -3,11 +3,22 @@ import { Home, Search, Library, Plus, Heart, Music } from 'lucide-react';
 interface SidebarProps {
   currentView: string;
   onViewChange: (view: string) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export const Sidebar = ({ currentView, onViewChange }: SidebarProps) => {
+export const Sidebar = ({ currentView, onViewChange, isOpen, onClose }: SidebarProps) => {
+  const handleViewChange = (view: string) => {
+    onViewChange(view);
+    onClose();
+  };
+
   return (
-    <div className="w-64 bg-black text-white flex flex-col h-full">
+    <div
+      className={`fixed inset-y-0 left-0 z-40 w-64 bg-black text-white flex flex-col h-full transform transition-transform duration-300 md:static md:translate-x-0 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}
+    >
       <div className="p-6">
         <div className="flex items-center gap-2 mb-8">
           <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg"></div>
@@ -16,7 +27,7 @@ export const Sidebar = ({ currentView, onViewChange }: SidebarProps) => {
 
         <nav className="space-y-4">
           <button
-            onClick={() => onViewChange('home')}
+            onClick={() => handleViewChange('home')}
             className={`flex items-center gap-3 w-full p-2 rounded-lg transition ${
               currentView === 'home' ? 'bg-gray-800' : 'hover:bg-gray-800'
             }`}
@@ -26,7 +37,7 @@ export const Sidebar = ({ currentView, onViewChange }: SidebarProps) => {
           </button>
 
           <button
-            onClick={() => onViewChange('search')}
+            onClick={() => handleViewChange('search')}
             className={`flex items-center gap-3 w-full p-2 rounded-lg transition ${
               currentView === 'search' ? 'bg-gray-800' : 'hover:bg-gray-800'
             }`}
@@ -36,7 +47,7 @@ export const Sidebar = ({ currentView, onViewChange }: SidebarProps) => {
           </button>
 
           <button
-            onClick={() => onViewChange('library')}
+            onClick={() => handleViewChange('library')}
             className={`flex items-center gap-3 w-full p-2 rounded-lg transition ${
               currentView === 'library' ? 'bg-gray-800' : 'hover:bg-gray-800'
             }`}
@@ -48,7 +59,7 @@ export const Sidebar = ({ currentView, onViewChange }: SidebarProps) => {
 
         <div className="mt-8 space-y-4">
           <button
-            onClick={() => onViewChange('add-song')}
+            onClick={() => handleViewChange('add-song')}
             className={`flex items-center gap-3 w-full p-2 rounded-lg transition ${
               currentView === 'add-song' ? 'bg-gray-800' : 'hover:bg-gray-800'
             }`}
@@ -60,7 +71,7 @@ export const Sidebar = ({ currentView, onViewChange }: SidebarProps) => {
           </button>
 
           <button
-            onClick={() => onViewChange('create-playlist')}
+            onClick={() => handleViewChange('create-playlist')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-gray-800 transition"
           >
             <div className="w-6 h-6 bg-gray-700 flex items-center justify-center rounded">
@@ -70,7 +81,7 @@ export const Sidebar = ({ currentView, onViewChange }: SidebarProps) => {
           </button>
 
           <button
-            onClick={() => onViewChange('liked')}
+            onClick={() => handleViewChange('liked')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-gray-800 transition"
           >
             <div className="w-6 h-6 bg-gradient-to-br from-purple-400 to-blue-400 flex items-center justify-center rounded">
